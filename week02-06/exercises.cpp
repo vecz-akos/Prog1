@@ -1,8 +1,8 @@
 // To compile, run this:
-// g++ exercises.cpp Graph.cpp Window.cpp GUI.cpp Simple_window.cpp -o exercises `fltk-config --ldflags --use-images`
+// g++ exercises.cpp GUI/Graph.cpp GUI/Window.cpp GUI/GUI.cpp GUI/Simple_window.cpp -o exercises `fltk-config --ldflags --use-images`
 
-#include "Simple_window.h"
-#include "Graph.h"
+#include "GUI/Simple_window.h"
+#include "GUI/Graph.h"
 
 #include <string>
 #include <iostream>
@@ -169,7 +169,7 @@ try {
 
     // Exercise 09
 
-    Image ii {Point{400, 200},"debrecen.jpg"};
+    Image ii {Point{400, 200},"GUI/debrecen.jpg"};
     win.attach(ii);
     Text deb{Point{440, 220}, "Debrecen"};
     deb.set_font(Font::courier);
@@ -180,53 +180,6 @@ try {
     win.set_label("Debrecen");
 
     win.wait_for_button();
-
-/*
-    Vector_ref<Rectangle> vr;
-    int w = 50;
-    int i = 0;
-    for (int row = 0; row < 3; ++row)
-    {
-        for (int col = 0; col < 3; ++col)
-        {
-            i++;
-            vr.push_back(new Rectangle{Point{350 + w * col, 200 + w * row}, w, w});
-            i = vr.size() - 1;
-
-            i % 2 == 0 ? vr[i].set_fill_color(Color::red) : vr[i].set_fill_color(Color::white);
-
-            win.attach(vr[row * 3 + col]);
-        }
-    }
-
-    Rectangle huge {Point{150, 150}, x_max() * 3 /2, y_max()};
-    //huge.set_style{Line_style(Line_style::solid, 8)};
-    huge.set_color(Color::green);
-
-    win.attach(huge);
-
-    //11-es feladat
-
-    constexpr double PI = 3.14159265;
-    const int X = win.x_max() / 2 - 50;
-    const int Y = win.y_max() / 2 - 50;
-
-    //haromszog
-
-    Polygon tri;
-    int alt = sin(60 * PI / 180) * 100;
-    tri.add(Point{X, Y + alt});
-    tri.add(Point{X + 50, Y});
-    tri.add(Point{X + 100, Y + alt});
-
-    tri.set_color(Color::red);
-
-
-    win.attach(tri);
-
-
-    win.wait_for_button();*/
-
 } catch(exception& e) {
     cerr << "exception\t" << e.what() << endl;
     return 1;
