@@ -1,8 +1,8 @@
 // To compile, run this:
-// g++ drill.cpp GUI/Graph.cpp GUI/Window.cpp GUI/GUI.cpp GUI/Simple_window.cpp -o drill `fltk-config --ldflags --use-images`
+// g++ drill.cpp ../GUI/Graph.cpp ../GUI/Window.cpp ../GUI/GUI.cpp ../GUI/Simple_window.cpp -o drill `fltk-config --ldflags --use-images`
 
-#include "GUI/Simple_window.h"
-#include "GUI/Graph.h"
+#include "../GUI/Simple_window.h"
+#include "../GUI/Graph.h"
 
 #include <string>
 #include <iostream>

@@ -1,8 +1,8 @@
 // To compile, run this:
-// g++ exercises.cpp GUI/Graph.cpp GUI/Window.cpp GUI/GUI.cpp GUI/Simple_window.cpp -o exercises `fltk-config --ldflags --use-images`
+// g++ exercises.cpp ../GUI/Graph.cpp ../GUI/Window.cpp ../GUI/GUI.cpp ../GUI/Simple_window.cpp -o exercises `fltk-config --ldflags --use-images`
 
-#include "GUI/Simple_window.h"
-#include "GUI/Graph.h"
+#include "../GUI/Simple_window.h"
+#include "../GUI/Graph.h"
 
 #include <string>
 #include <iostream>
@@ -169,7 +169,7 @@ try {
 
     // Exercise 09
 
-    Image ii {Point{400, 200},"GUI/debrecen.jpg"};
+    Image ii {Point{400, 200},"../GUI/debrecen.jpg"};
     win.attach(ii);
     Text deb{Point{440, 220}, "Debrecen"};
     deb.set_font(Font::courier);
