@@ -169,7 +169,7 @@ try {
 
     // Exercise 09
 
-    Image ii {Point{400, 200},"../GUI/debrecen.jpg"};
+    Image ii {Point{400, 200},"debrecen.jpg"};
     win.attach(ii);
     Text deb{Point{440, 220}, "Debrecen"};
     deb.set_font(Font::courier);
