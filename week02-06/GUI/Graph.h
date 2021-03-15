@@ -103,6 +103,7 @@ public:
 	void draw() const;
 
 	virtual void move(int dx, int dy);
+	virtual void moveToPoint(Point d);
 
 	void set_color(Color col) { lcolor = col; }
 	Color color() const { return lcolor; }
@@ -169,6 +170,11 @@ struct Lines : Shape {
 	void add(Point p1, Point p2) { Shape::add(p1); Shape::add(p2); }
 };
 
+struct Arrow : Line {
+    Arrow(Point p1, Point p2) :Line(p1,p2) { }
+    void draw_lines() const;
+};
+
 struct Open_polyline : Shape {
 	Open_polyline(){};
 	Open_polyline(initializer_list<Point> lst) : Shape(lst){};
@@ -209,6 +215,23 @@ private:
 
 };
 
+struct Box : Shape {
+	Box(Point p, int ww, int hh, int rr = -1)
+		:w(ww), h(hh), rad(rr == -1 ? (ww > hh ? hh / 4 : ww / 4) : rr)
+	{
+		if (!(h * w)) error("Box(): a magassag vagy a szelesseg 0");
+		if (rad < 0) error("Box(): rad nem lehet negativ");
+		if (rad > w / 2 || rad > h / 2) error("Box(): rad nem lehet nagyobb egyik oldal felénél sem");
+		add(p);
+	}
+
+	void draw_lines() const;
+private:
+	int w;
+	int h;
+	int rad;
+};
+
 struct Text : Shape {
 private:
 	string lab;
@@ -229,8 +252,20 @@ public:
 	int font_size() const { return fnt_sz; }
 };
 
-struct Circle : Shape
-{
+struct Textbox : Box {
+    Textbox(Point xy, int ww, string s)
+        :Box(xy, ww, h_tb), label(Point(xy.x + 4, xy.y + 17), s) { }
+
+    void draw_lines() const;
+    void move(int dx, int dy);
+    void set_color(Color c);
+
+    Text label;
+private:
+    static const int h_tb = 24;
+};
+
+struct Circle : Shape {
 private:
 	int r;
 public:
@@ -263,6 +298,37 @@ struct Ellipse : Shape {
 private:
 	int w;
 	int h;
+};
+
+struct Arc : Shape {
+	Arc(Point p, int ww, int hh, double aa1, double aa2);
+
+	void draw_lines() const;
+	Point center() const { return{ point(0).x + w, point(0).y + h }; };
+	int major() const { return w; };
+	int minor() const { return h; };
+    void set_major(int ww) { set_point(0,Point(center().x-ww,center().y-h)); w = ww; };
+    void set_minor(int hh) { set_point(0,Point(center().x-w,center().y-hh)); h = hh; };
+
+    void set_angles(double aa1, double aa2) {
+    	if (aa1 >= aa2) error("set_angles(): az elso szognek kisebbnek kell lennie, mint a masodiknak");
+    	a1 = aa1;
+    	a2 = aa2;
+    }
+    void set_angle1(double aa1) {
+    	if (aa1 >= a2) error("set_angle1(): az elso szognek kisebbnek kell lennie, mint a masodiknak");
+    	a1 = aa1;
+    }
+    void set_angle2(double aa2) {
+    	if (a1 >= aa2) error("set_angle2(): az elso szognek kisebbnek kell lennie, mint a masodiknak");
+    	a2 = aa2;
+    }
+
+private:
+	int w;
+	int h;
+	int a1;
+	int a2;
 };
 
 struct Marked_polyline : Open_polyline
@@ -307,6 +373,7 @@ public:
 	void draw_lines() const;
 	void set_mask(Point xy, int ww, int hh) { w = ww; h = hh; cx=xy.x; cy=xy.y; }
 	void move(int dx, int dy) { Shape::move(dx,dy); p->draw(point(0).x,point(0).y); }
+	void moveToPoint(Point d) { Shape::moveToPoint(d); p->draw(point(0).x,point(0).y); }
 };
 
 typedef double Fct(double);
