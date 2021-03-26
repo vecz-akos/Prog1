@@ -288,6 +288,70 @@ void Arc::draw_lines() const
 	}
 }
 
+void Smiley::draw_lines() const {
+	if (fill_color().visibility()) {
+		fl_color(fill_color().as_int());
+		fl_pie(point(0).x + radius() * 1/2, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_pie(point(0).x + radius() * 5/4, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_color(color().as_int());
+	}
+	if (color().visibility()) {
+		fl_color(color().as_int());
+		fl_arc(point(0).x, point(0).y, radius() + radius(), radius() + radius(), 0, 360);
+		fl_arc(point(0).x + radius() * 1/2, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_arc(point(0).x + radius() * 5/4, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_arc(point(0).x + radius() / 2, point(0).y + radius(), radius(), radius() / 2, 180, 360);
+	}
+}
+
+void Frowny::draw_lines() const {
+	if (fill_color().visibility()) {
+		fl_color(fill_color().as_int());
+		fl_pie(point(0).x + radius() * 1/2, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_pie(point(0).x + radius() * 5/4, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_color(color().as_int());
+	}
+	if (color().visibility()) {
+		fl_color(color().as_int());
+		fl_arc(point(0).x, point(0).y, radius() + radius(), radius() + radius(), 0, 360);
+		fl_arc(point(0).x + radius() * 1/2, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_arc(point(0).x + radius() * 5/4, point(0).y + radius() * 1/4, radius() / 4, radius() * 2/3, 0, 360);
+		fl_arc(point(0).x + radius() / 2, point(0).y + radius(), radius(), radius() / 2, 0, 180);
+	}
+}
+
+void Smiley_with_hat::draw_lines() const {
+	Smiley::draw_lines();
+	if (fill_color().visibility()){
+		fl_color(fill_color().as_int());
+		fl_rectf(point(0).x + radius() / 2, point(0).y - radius() / 4, radius(), radius() / 4);
+		fl_rectf(point(0).x + radius() / 4, point(0).y, radius() *  3/2, radius() / 4);
+		fl_color(color().as_int());
+	}
+
+	if (color().visibility()) {
+		fl_color(color().as_int());
+		fl_rect(point(0).x + radius() / 2, point(0).y - radius() / 4, radius(), radius() / 4);
+		fl_rect(point(0).x + radius() / 4, point(0).y, radius() *  3/2, radius() / 4);
+	}
+}
+
+void Frowny_with_hat::draw_lines() const {
+	Frowny::draw_lines();
+	if (fill_color().visibility()){
+		fl_color(fill_color().as_int());
+		fl_rectf(point(0).x + radius() / 2, point(0).y - radius() / 4, radius(), radius() / 4);
+		fl_rectf(point(0).x + radius() / 4, point(0).y, radius() *  3/2, radius() / 4);
+		fl_color(color().as_int());
+	}
+
+	if (color().visibility()) {
+		fl_color(color().as_int());
+		fl_rect(point(0).x + radius() / 2, point(0).y - radius() / 4, radius(), radius() / 4);
+		fl_rect(point(0).x + radius() / 4, point(0).y, radius() *  3/2, radius() / 4);
+	}
+}
+
 void draw_mark(Point x, char c){
 	
 	static const int dx = 4;
@@ -373,15 +437,59 @@ void Image::draw_lines() const
 	}
 }
 
-Function::Function(Fct f, double r1, double r2, Point xy, int count, double xscale, double yscale){
+Function::Function(Fct f, double r1, double r2, Point orig, int count, double xscale, double yscale){
 	if (r2-r1<=0) error ("Rossz range!");
 	if (count<=0) error ("Rossz count!");
 	double dist = (r2-r1)/count;
-	double r = r1;
-	for (int i = 0; i < count; ++i){
-		add(Point(xy.x+int(r*xscale), xy.y-int(f(r)*yscale)));
-		r += dist;
+	for (double r = r1; r < r2; r += dist){
+		add(Point(orig.x+int(r*xscale), orig.y-int(f(r)*yscale)));
 	}
+}
+
+Flex_function::Flex_function(Fct f, double r1, double r2, Point xy,int count,
+                             double xscale, double yscale, double precision)
+    :Function(f,r1,r2,xy,count,xscale,yscale),
+     fct(f), range1(r1), range2(r2), origin(xy),
+     c(count), xsc(xscale), ysc(yscale), prec(precision)
+{
+    reset();
+}
+
+void Flex_function::reset_range(double r1, double r2) {
+    if (r2<=r1) error("bad graphing range");
+    range1 = r1;
+    range2 = r2;
+    reset();
+}
+
+void Flex_function::reset_count(int count) {
+    if (count<=0) error("non-positive graphing count");
+    c = count;
+    reset();
+}
+
+void Flex_function::reset_xscale(double xscale) {
+    if (xscale==0) error("xscale must not be zero");
+    xsc = xscale;
+    reset();
+}
+
+void Flex_function::reset_yscale(double yscale) {
+    if (yscale==0) error("yscale must not be zero");
+    ysc = yscale;
+    reset();
+}
+
+void Flex_function::reset()
+{
+    double dist = (range2-range1)/c;
+    double r = range1;
+    clear_points();
+    for (int i = 0; i<c; ++i) {
+        add(Point(origin.x+int(int(r*xsc)/prec)*prec,
+            origin.y-int(int(fct(r)*ysc)/prec)*prec));
+        r += dist;
+    }
 }
 
 Axis::Axis(Orientation d, Point xy, int length, int n, string lab )

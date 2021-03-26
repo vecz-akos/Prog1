@@ -128,6 +128,7 @@ protected:
 	void add(Point p) { points.push_back(p); }
 	void set_point(int i, Point p) { points[i] = p; }
 	virtual void draw_lines() const;
+    void clear_points() { points.clear(); }
 
 private:
 	vector<Point> points;
@@ -331,6 +332,30 @@ private:
 	int a2;
 };
 
+struct Smiley : Circle {
+	Smiley(Point xy, int rr): Circle(xy, rr) {};
+
+	void draw_lines() const;
+};
+
+struct Frowny : Circle {
+	Frowny(Point xy, int rr): Circle(xy, rr) {};
+
+	void draw_lines() const;
+};
+
+struct Smiley_with_hat : Smiley {
+	Smiley_with_hat(Point xy, int rr): Smiley(xy, rr) {};
+
+	void draw_lines() const;
+};
+
+struct Frowny_with_hat : Frowny {
+	Frowny_with_hat(Point xy, int rr): Frowny(xy, rr) {};
+
+	void draw_lines() const;
+};
+
 struct Marked_polyline : Open_polyline
 {
 	Marked_polyline(const string& m): mark(m) { }
@@ -379,7 +404,32 @@ public:
 typedef double Fct(double);
 
 struct Function : Shape {
-	Function(Fct f, double r1, double r2, Point orig, int count = 100, double xscale = 25, double yscale = 25);
+    // the function parameters are not stored
+    Function(Fct f, double r1, double r2, Point orig,
+             int count = 100, double xscale = 25, double yscale = 25);
+};
+
+// stores function parameters
+struct Flex_function : Function {
+    Flex_function(Fct f, double r1, double r2, Point orig, int count = 100,
+                  double xscale = 25, double yscale = 25, double precision = 1);
+    void reset_fct(Fct f) { fct = f; reset(); }
+    void reset_range(double r1, double r2);
+    void reset_orig(Point orig) { origin = orig; reset(); }
+    void reset_count(int count);
+    void reset_xscale(double xscale);
+    void reset_yscale(double yscale);
+    void reset_precision(double precision) { prec = precision; reset(); }
+private:
+    void reset();
+    Fct* fct;
+    double range1;
+    double range2;
+    Point origin;
+    int c;
+    double xsc;
+    double ysc;
+    double prec;
 };
 
 struct Axis : Shape {
