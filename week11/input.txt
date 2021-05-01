@@ -1,0 +1,10 @@
+napelemes_zseblampa 0 1.1
+orokmozgo 1 50
+gamer_bicikli 2 3.3
+kituzo 3 4.4
+kituzo2 4 5.5
+kituzo3 5 6.6
+meroszalag_2km 6 7.7
+meroszalag_2cm 7 8.8
+balkezes_napszemuveg 8 10
+jobbkezes_napszemuveg 9 10
