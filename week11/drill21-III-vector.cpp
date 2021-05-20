@@ -88,7 +88,7 @@ int main() {
 
 	// 8
 
-	double avg = accumulate(vd.begin(), vd.end(), 0.0) / (vd.size() + 1);
+	double avg = accumulate(vd.begin(), vd.end(), 0.0) / vd.size();
 
 	cout << "Average of vd:\t" << avg << endl;
 
